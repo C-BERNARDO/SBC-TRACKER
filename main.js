@@ -30,7 +30,7 @@ const COLUMN_DEFS = [
   { key: 'chcode',     fileCol: 'chcode',                          label: 'CH Code',                section: 'identity',     valueClass: 'v-chcode' },
   { key: 'accountKey', fileCol: 'Account Key',                     label: 'Account Key',            section: 'identity',     valueClass: 'v-acckey' },
   { key: 'birthday',   fileCol: 'Birthdate',                       label: 'Birthday',               section: 'identity',     valueClass: 'v-birthday'},
-  { key: 'cycle',      fileCol: 'Repayment Cycle',                 label: 'Cycle',                  section: 'identity',     valueClass: 'v-cycle'  },
+  { key: 'cycle',      fileCol: 'Repaymen Cycle',                 label: 'Cycle',                  section: 'identity',     valueClass: 'v-cycle'  },
   { key: 'delayDays',  fileCol: 'Delay Days',                      label: 'Delay Days',             section: 'status',       valueClass: 'v-delay'  },
   { key: 'totalOB',    fileCol: 'Total Outstanding',               label: 'Total OB',               section: 'status',       valueClass: 'v-ob'     },
   { key: 'stmtMinPay', fileCol: 'Statement Minum Payment',         label: 'Statement Min. Payment', section: 'status',       valueClass: 'v-min'    },
