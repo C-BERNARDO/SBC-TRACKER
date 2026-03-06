@@ -225,8 +225,33 @@ function createCard(record, query, index) {
     grouped[def.section].push(def);
   });
 
-  // Build section HTML
-  const sectionsHTML = Object.entries(SECTIONS).map(([key, meta]) => {
+  // Pre-build contact values for header
+  const emailVal   = record.email ? escapeHtml(record.email) : '';
+  const addrParts  = [record.address, record.zipCode, record.county].filter(v => v && v.trim());
+  const addrVal    = addrParts.length ? escapeHtml(addrParts.join(', ')) : '';
+
+  const contactHeaderHTML = (emailVal || addrVal) ? `
+    <div class="rc-header-contact">
+      ${emailVal ? `
+        <div class="rc-contact-item">
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
+            <rect x="0.75" y="2" width="9.5" height="7" rx="1.25" stroke="currentColor" stroke-width="1.2"/>
+            <path d="M0.75 3.5l4.75 3 4.75-3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>${emailVal}</span>
+        </div>` : ''}
+      ${addrVal ? `
+        <div class="rc-contact-item">
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
+            <path d="M5.5 1C3.567 1 2 2.567 2 4.5c0 2.625 3.5 5.5 3.5 5.5S9 7.125 9 4.5C9 2.567 7.433 1 5.5 1z" stroke="currentColor" stroke-width="1.2"/>
+            <circle cx="5.5" cy="4.5" r="1.25" stroke="currentColor" stroke-width="1.1"/>
+          </svg>
+          <span>${addrVal}</span>
+        </div>` : ''}
+    </div>` : '';
+
+  // Build sectionsHTML — skip contact section (now in header)
+  const sectionsHTML = Object.entries(SECTIONS).filter(([key]) => key !== 'contact').map(([key, meta]) => {
     const fields = grouped[key] || [];
     const isContact      = key === 'contact';
     const isInstallments = key === 'installments';
@@ -318,9 +343,12 @@ function createCard(record, query, index) {
 
   card.innerHTML = `
     <div class="rc-header">
-      <div class="rc-name-row">
-        ${genderIcon(record.gender)}
-        <div class="rc-name">${highlightMatch(record.name, query)}</div>
+      <div class="rc-header-left">
+        <div class="rc-name-row">
+          ${genderIcon(record.gender)}
+          <div class="rc-name">${highlightMatch(record.name, query)}</div>
+        </div>
+        ${contactHeaderHTML}
       </div>
       <div class="rc-index">
         <span class="rc-badge">#${index}</span>
