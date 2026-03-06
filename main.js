@@ -244,7 +244,7 @@ function createCard(record, query, index) {
         { num: '04', amtKey: 'install04', dateKey: 'installDate04' },
       ];
       itemsHTML = pairs.map(p => {
-        const amt      = record[p.amtKey]  || '';
+        const amt      = formatAmount(record[p.amtKey]  || '');
         const dateRaw  = record[p.dateKey] || '';
         const date     = formatDate(dateRaw);
         const emptyAmt  = !amt;
@@ -289,6 +289,9 @@ function createCard(record, query, index) {
 
       // Format date fields
       if (DATE_KEYS.has(def.key)) raw = formatDate(raw);
+
+      // Format amount fields
+      if (AMOUNT_KEYS.has(def.key)) raw = formatAmount(raw);
 
       const empty = !raw;
       // Highlight search query in chcode and accountKey values
@@ -392,6 +395,18 @@ function formatDate(raw) {
 
 function fmtDate(d) {
   return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: '2-digit' });
+}
+
+/* ── Amount formatter ──────────────────────────────────────── */
+const AMOUNT_KEYS = new Set(['totalOB', 'stmtMinPay', 'pastDue', 'install01', 'install02', 'install03', 'install04']);
+
+function formatAmount(raw) {
+  if (!raw || !raw.trim()) return '';
+  // Strip existing commas, currency symbols, whitespace
+  const cleaned = raw.trim().replace(/[,\s$₱€£¥]/g, '');
+  const num = parseFloat(cleaned);
+  if (isNaN(num)) return raw; // return as-is if not a number
+  return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
 function showError(msg) { alert('⚠ ' + msg); }
