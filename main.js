@@ -185,7 +185,11 @@ function performSearch(query) {
   if (!query) { clearResults(); return; }
 
   const q       = query.toLowerCase();
-  const matched = records.filter(r => r.name.toLowerCase().includes(q));
+  const matched = records.filter(r =>
+    r.name.toLowerCase().includes(q) ||
+    r.chcode.toLowerCase().includes(q) ||
+    r.accountKey.toLowerCase().includes(q)
+  );
 
   resultsList.innerHTML = '';
   emptyState.style.display = 'none';
@@ -240,8 +244,9 @@ function createCard(record, query, index) {
         { num: '04', amtKey: 'install04', dateKey: 'installDate04' },
       ];
       itemsHTML = pairs.map(p => {
-        const amt  = record[p.amtKey]  || '';
-        const date = record[p.dateKey] || '';
+        const amt      = record[p.amtKey]  || '';
+        const dateRaw  = record[p.dateKey] || '';
+        const date     = formatDate(dateRaw);
         const emptyAmt  = !amt;
         const emptyDate = !date;
         return `
@@ -282,8 +287,13 @@ function createCard(record, query, index) {
         raw = parts.join(', ');
       }
 
+      // Format date fields
+      if (DATE_KEYS.has(def.key)) raw = formatDate(raw);
+
       const empty = !raw;
-      const v     = raw ? escapeHtml(raw) : '—';
+      // Highlight search query in chcode and accountKey values
+      const highlight = !empty && (def.key === 'chcode' || def.key === 'accountKey');
+      const v = empty ? '—' : highlight ? highlightMatch(raw, query) : escapeHtml(raw);
       return `
         <div class="rc-desc-item">
           <div class="rc-desc-label">${def.label}</div>
@@ -345,6 +355,43 @@ function escapeHtml(s) {
 
 function escapeRegex(s) {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/* ── Date formatter ────────────────────────────────────────── */
+const DATE_KEYS = new Set(['birthday', 'installDate01', 'installDate02', 'installDate03', 'installDate04']);
+
+function formatDate(raw) {
+  if (!raw || !raw.trim()) return '';
+
+  // Excel serial number — pure integer like "32874" or float "32874.0"
+  if (/^\d{4,6}(\.\d+)?$/.test(raw.trim())) {
+    const serial = parseFloat(raw);
+    const d = new Date(Math.round((serial - 25569) * 86400000));
+    if (!isNaN(d)) return fmtDate(d);
+  }
+
+  // Already "Month DD, YYYY" — pass through
+  if (/^[A-Za-z]+ \d{1,2}, \d{4}$/.test(raw.trim())) return raw.trim();
+
+  // Try native parse after normalising separators
+  const norm = raw.trim().replace(/\//g, '-');
+  const d1 = new Date(norm);
+  if (!isNaN(d1) && d1.getFullYear() > 1900) return fmtDate(d1);
+
+  // Explicit DD-MM-YYYY or DD.MM.YYYY
+  const dmy = raw.trim().match(/^(\d{1,2})[.\-\/](\d{1,2})[.\-\/](\d{2,4})$/);
+  if (dmy) {
+    const [, dd, mm, yy] = dmy;
+    const year = yy.length === 2 ? (parseInt(yy) > 30 ? 1900 + +yy : 2000 + +yy) : +yy;
+    const d2 = new Date(year, +mm - 1, +dd);
+    if (!isNaN(d2)) return fmtDate(d2);
+  }
+
+  return raw; // return as-is if unparseable
+}
+
+function fmtDate(d) {
+  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: '2-digit' });
 }
 
 function showError(msg) { alert('⚠ ' + msg); }
