@@ -14,14 +14,18 @@ const clearBtn       = document.getElementById('clearBtn');
 const resultsList    = document.getElementById('resultsList');
 const emptyState     = document.getElementById('emptyState');
 const noResults      = document.getElementById('noResults');
-const statsBar       = document.getElementById('statsBar');
-const statsText      = document.getElementById('statsText');
+const statsBar       = { style: { display: '' } }; // stub — footer removed
+const statsText      = { textContent: '' };          // stub — footer removed
 const reloadBtn      = document.getElementById('reloadBtn');
 
 // Topbar dynamic elements
 const topbarStats      = document.getElementById('topbarStats');
 const matchStat        = document.getElementById('matchStat');
 const matchLabel       = document.getElementById('matchLabel');
+const searchingState   = document.getElementById('searchingState');
+const searchingCount   = document.getElementById('searchingCount');
+
+let searchTimer = null;
 
 /* ── Column definitions ────────────────────────────────────── */
 const COLUMN_DEFS = [
@@ -169,18 +173,37 @@ function processData(json, fileName) {
 searchInput.addEventListener('input', () => {
   const q = searchInput.value.trim();
   clearBtn.style.display = q ? 'flex' : 'none';
-  performSearch(q);
+
+  if (!q) { clearResults(); return; }
+
+  // Show searching animation immediately
+  showSearching(q);
+
+  // Debounce: wait 420ms of idle typing before filtering
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => performSearch(q), 420);
 });
 
 clearBtn.addEventListener('click', () => {
+  clearTimeout(searchTimer);
   searchInput.value = '';
   clearBtn.style.display = 'none';
   clearResults();
   searchInput.focus();
 });
 
+function showSearching(query) {
+  resultsList.innerHTML       = '';
+  emptyState.style.display    = 'none';
+  noResults.style.display     = 'none';
+  statsBar.style.display      = 'none';
+  matchStat.style.display     = 'none';
+  searchingCount.textContent  = records.length.toLocaleString();
+  searchingState.style.display = 'flex';
+}
+
 function performSearch(query) {
-  if (!query) { clearResults(); return; }
+  searchingState.style.display = 'none';
 
   const q       = query.toLowerCase();
   const matched = records.filter(r =>
@@ -364,11 +387,12 @@ function createCard(record, query, index) {
 
 /* ── Helpers ───────────────────────────────────────────────── */
 function clearResults() {
-  resultsList.innerHTML    = '';
-  emptyState.style.display = 'flex';
-  noResults.style.display  = 'none';
-  statsBar.style.display   = 'none';
-  matchStat.style.display  = 'none';
+  resultsList.innerHTML        = '';
+  emptyState.style.display     = 'flex';
+  noResults.style.display      = 'none';
+  searchingState.style.display = 'none';
+  statsBar.style.display       = 'none';
+  matchStat.style.display      = 'none';
 }
 
 function highlightMatch(text, query) {

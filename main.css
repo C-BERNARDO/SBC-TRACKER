@@ -129,15 +129,15 @@ button { font-family: var(--font-body); cursor: pointer; border: none; backgroun
 }
 
 .topbar-logo-icon {
-  width: 36px;
-  height: 36px;
-  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
-  border-radius: var(--radius-sm);
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border-radius: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: var(--shadow-gold);
+  filter: drop-shadow(0 2px 6px rgba(141, 198, 63, 0.35)) drop-shadow(0 2px 6px rgba(77, 184, 232, 0.35));
 }
 
 /* Text wrapper — slides & fades on resize */
@@ -539,6 +539,97 @@ button { font-family: var(--font-body); cursor: pointer; border: none; backgroun
   min-height: 0;
 }
 
+/* ── Searching animation state ─────────────────────────────── */
+.searching-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 24px;
+  background: var(--white);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  gap: 6px;
+  animation: fadeIn 0.2s ease both;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.searching-graphic {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 8px;
+}
+
+/* Spinning arcs on the magnifier */
+.search-svg {
+  overflow: visible;
+}
+
+.spin-arc {
+  transform-origin: 34px 34px;
+  animation: spinArc 1.1s linear infinite;
+}
+
+.spin-arc-2 {
+  transform-origin: 34px 34px;
+  animation: spinArc 1.7s linear infinite reverse;
+}
+
+@keyframes spinArc {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Pulsing dots */
+.searching-dots {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--navy);
+  animation: dotPulse 1.2s ease-in-out infinite;
+  opacity: 0.15;
+}
+
+.dot:nth-child(1) { animation-delay: 0s;    background: #0033a0; }
+.dot:nth-child(2) { animation-delay: 0.2s;  background: #4db8e8; }
+.dot:nth-child(3) { animation-delay: 0.4s;  background: #8dc63f; }
+
+@keyframes dotPulse {
+  0%, 80%, 100% { transform: scale(0.8); opacity: 0.2; }
+  40%            { transform: scale(1.3); opacity: 1;   }
+}
+
+.searching-title {
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.searching-hint {
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+.searching-hint span {
+  font-weight: 600;
+  color: var(--navy-light);
+}
+
 /* Empty states */
 .ant-empty {
   display: flex;
@@ -865,16 +956,6 @@ button { font-family: var(--font-body); cursor: pointer; border: none; backgroun
   background: var(--border-light);
   flex-shrink: 0;
   align-self: stretch;
-}
-
-/* ── Results footer ────────────────────────────────────────── */
-.results-footer {
-  flex-shrink: 0;
-  padding: 10px 2px 0;
-  font-size: 12px;
-  color: var(--text-muted);
-  border-top: 1px solid var(--border-light);
-  font-weight: 500;
 }
 
 /* ── Scrollbar ─────────────────────────────────────────────── */
