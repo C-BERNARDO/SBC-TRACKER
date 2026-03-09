@@ -31,8 +31,9 @@ let searchTimer = null;
 const COLUMN_DEFS = [
   { key: 'name',       fileCol: 'Name',                            label: 'Name',                   section: null,           valueClass: ''         },
   { key: 'gender',     fileCol: 'Gender',                          label: 'Gender',                 section: null,           valueClass: ''         },
-  { key: 'chcode',     fileCol: 'chcode',                          label: 'CH Code',                section: 'identity',     valueClass: 'v-chcode' },
-  { key: 'accountKey', fileCol: 'Account Key',                     label: 'Account Key',            section: 'identity',     valueClass: 'v-acckey' },
+  { key: 'chcode',      fileCol: 'chcode',          label: 'CH Code',     section: 'identity', valueClass: 'v-chcode'  },
+  { key: 'accountKey',  fileCol: 'Account Key',     label: 'Account Key', section: 'identity', valueClass: 'v-acckey'  },
+  { key: 'cardNumber',  fileCol: 'Contract Number', label: 'Card Number', section: 'identity', valueClass: 'v-card'    },
   { key: 'birthday',   fileCol: 'Birthdate',                       label: 'Birthday',               section: 'identity',     valueClass: 'v-birthday'},
   { key: 'cycle',      fileCol: 'Repaymen Cycle',                 label: 'Cycle',                  section: 'identity',     valueClass: 'v-cycle'  },
   { key: 'delayDays',  fileCol: 'Delay Days',                      label: 'Delay Days',             section: 'status',       valueClass: 'v-delay'  },

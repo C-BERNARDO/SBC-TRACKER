@@ -884,6 +884,7 @@ button { font-family: var(--font-body); cursor: pointer; border: none; backgroun
 /* Value colours — banking-appropriate */
 .rc-desc-value.v-chcode   { color: var(--navy-light); }
 .rc-desc-value.v-acckey   { color: var(--navy-mid); }
+.rc-desc-value.v-card     { color: var(--navy); font-family: 'Courier New', monospace; letter-spacing: 0.06em; }
 .rc-desc-value.v-birthday { color: var(--text-secondary); }
 .rc-desc-value.v-cycle    { color: var(--info); }
 .rc-desc-value.v-delay    { color: var(--warning); font-weight: 700; }
