@@ -210,7 +210,8 @@ function performSearch(query) {
   const matched = records.filter(r =>
     r.name.toLowerCase().includes(q) ||
     r.chcode.toLowerCase().includes(q) ||
-    r.accountKey.toLowerCase().includes(q)
+    r.accountKey.toLowerCase().includes(q) ||
+    r.email.toLowerCase().includes(q)
   );
 
   resultsList.innerHTML = '';
@@ -342,7 +343,7 @@ function createCard(record, query, index) {
 
       const empty = !raw;
       // Highlight search query in chcode and accountKey values
-      const highlight = !empty && (def.key === 'chcode' || def.key === 'accountKey');
+      const highlight = !empty && (def.key === 'chcode' || def.key === 'accountKey' || def.key === 'email');
       const v = empty ? '—' : highlight ? highlightMatch(raw, query) : escapeHtml(raw);
       return `
         <div class="rc-desc-item">
