@@ -120,7 +120,7 @@ function readCSV(file) {
 
 function csvToJson(text) {
   const lines   = text.trim().split(/\r?\n/);
-  const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+  const headers = lines[0].split(',').map(h => h.trim().replace(/^[\ufeff"]+|["]+$/g, ''));
   return lines.slice(1).map(line => {
     const vals = line.split(',').map(v => v.trim().replace(/^"|"$/g, ''));
     const obj  = {};
@@ -133,7 +133,7 @@ function csvToJson(text) {
 function processData(json, fileName) {
   if (!json.length) { showError('File is empty.'); return; }
 
-  const norm       = s => s.toLowerCase().replace(/[\s_\-()"']/g, '');
+  const norm       = s => s.toLowerCase().replace(/[\s_\-()"'\u00a0\ufeff\r]/g, '');
   const headerMap  = {};
   Object.keys(json[0]).forEach(h => { headerMap[norm(h)] = h; });
 
@@ -207,11 +207,12 @@ function performSearch(query) {
   searchingState.style.display = 'none';
 
   const q       = query.toLowerCase();
+  const safe    = v => (v || '').toLowerCase();
   const matched = records.filter(r =>
-    r.name.toLowerCase().includes(q) ||
-    r.chcode.toLowerCase().includes(q) ||
-    r.accountKey.toLowerCase().includes(q) ||
-    r.email.toLowerCase().includes(q)
+    safe(r.name).includes(q) ||
+    safe(r.chcode).includes(q) ||
+    safe(r.accountKey).includes(q) ||
+    safe(r.email).includes(q)
   );
 
   resultsList.innerHTML = '';
